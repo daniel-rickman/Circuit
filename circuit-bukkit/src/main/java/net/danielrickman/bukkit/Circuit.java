@@ -1,58 +1,42 @@
 package net.danielrickman.bukkit;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
-import lombok.Getter;
-import lombok.Setter;
-import net.danielrickman.api.annotation.Game;
-import net.danielrickman.api.inject.APIBinderModule;
-import net.danielrickman.api.listener.CoreListener;
-import net.danielrickman.api.map.Map;
-import net.danielrickman.api.map.MapConfiguration;
-import net.danielrickman.api.map.MapLoader;
+import net.citizensnpcs.api.CitizensAPI;
+import net.danielrickman.api.guice.APIBinderModule;
+import net.danielrickman.api.listener.CircuitListener;
+import net.danielrickman.api.listener.DefaultListener;
+import net.danielrickman.api.map.pregame.LobbyConfiguration;
 import net.danielrickman.api.plugin.CircuitGame;
 import net.danielrickman.api.plugin.CircuitPlugin;
-import net.danielrickman.api.util.ClassUtil;
-import net.danielrickman.bukkit.map.LobbyConfiguration;
+import net.danielrickman.api.util.Logger;
+import net.danielrickman.bukkit.repository.LobbyRepository;
 import net.danielrickman.bukkit.state.PreGameState;
-import org.bukkit.Bukkit;
 
-import javax.inject.Inject;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class Circuit extends CircuitPlugin {
 
     @Inject
-    @Getter
-    private MapLoader mapLoader;
-    @Getter
-    private Map<LobbyConfiguration> lobby;
-    @Getter
-    @Setter
-    private Map<? extends MapConfiguration> gameMap;
-    @Getter
-    private List<CircuitGame> loadedGames = new ArrayList<>();
+    private LobbyRepository lobby;
 
     @Override
     public void onEnable() {
         loadInjectors();
         loadGames();
-        Bukkit.getLogger().info("Loaded games: " + Arrays.toString(getLoadedGames().toArray()));
-        lobby = mapLoader.loadMap(this, LobbyConfiguration.class);
-        if (lobby == null) {
-            this.getLogger().severe("Lobby not loaded correctly");
+        setLobbyMap(getMapLoader().loadMap(this, LobbyConfiguration.class));
+        if (getLobbyMap() == null) {
+            Logger.error("Lobby map is null");
         }
-        new CoreListener(this, getPlayerRepository()).enable();
+        CircuitListener.enable(new DefaultListener(this, getGlobalRepository()));
         queuePreGame();
         nextState();
+        getMapLoader().loadGameMaps();
     }
 
     @Override
     public void onDisable() {
-        getCurrentState().stop();
+        CitizensAPI.getNPCRegistry().deregisterAll();
     }
 
     @Override
@@ -66,34 +50,16 @@ public class Circuit extends CircuitPlugin {
         injector.injectMembers(this);
     }
 
-
-    public void loadGames() {
-        ClassUtil.getClassesWithAnnotation(Game.class, "net.danielrickman").forEach(clazz -> {
-            if (CircuitGame.class.isAssignableFrom(clazz)) {
-                try {
-                    loadedGames.add((CircuitGame) clazz.getDeclaredConstructor().newInstance());
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-            }});
-    }
-
-    public Optional<CircuitGame> getGameByID(String identifier) {
-        if (!loadedGames.isEmpty()) {
-            return loadedGames
-                    .stream()
-                    .filter(game -> game.getIdentifier().equalsIgnoreCase(identifier))
-                    .findFirst();
-        }
-        return Optional.empty();
-    }
-
     public void queuePreGame() {
-        getStates().add(new PreGameState(this));
+        getStates().add(new PreGameState(this, getGlobalRepository(), lobby));
     }
 
-    public boolean isGameRunning() {
-        return !(getCurrentState() instanceof PreGameState);
+    public void queueGame(CircuitGame game) {
+        if (game.getStates().size() == 0) {
+            Logger.error("No game states found for %s", game.getStrippedName());
+        } else {
+            getStates().addAll(game.getStates());
+            queuePreGame();
+        }
     }
-
 }

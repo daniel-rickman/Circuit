@@ -2,7 +2,7 @@ package net.danielrickman.api.npc;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.trait.SkinTrait;
@@ -12,20 +12,23 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class NPCBuilder {
 
+    private final EntityType type;
     private String displayName = "NPC";
     private String uuid, texture, signature;
-    private EntityType type;
 
-    public NPCBuilder displayName(String displayName) {
-        this.displayName = displayName;
-        return this;
+    public static NPCBuilder of(EntityType type) {
+        return new NPCBuilder(type);
     }
 
-    public NPCBuilder ofType(EntityType type) {
-        this.type = type;
+    public static NPCBuilder ofPlayer(Player p, String displayName) {
+        return NPCBuilder.of(EntityType.PLAYER).withName(displayName).withSkin(p);
+    }
+
+    public NPCBuilder withName(String displayName) {
+        this.displayName = displayName;
         return this;
     }
 

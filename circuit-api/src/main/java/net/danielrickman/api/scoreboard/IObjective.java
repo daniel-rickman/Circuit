@@ -6,8 +6,11 @@ import org.bukkit.scoreboard.RenderType;
 public interface IObjective {
 
     String getName();
+
     String getDisplayName();
+
     DisplaySlot getSlot();
+
     RenderType getRenderType();
 
 

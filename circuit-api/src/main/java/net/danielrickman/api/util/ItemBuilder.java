@@ -3,9 +3,7 @@ package net.danielrickman.api.util;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +13,13 @@ public class ItemBuilder {
 
     private final Material material;
     private String displayName = " ";
-    private List<String> lore = new ArrayList<>();
-    private boolean isEnchanted = false;
+    private final List<String> lore = new ArrayList<>();
+    private boolean isEnchanted = false, isUnbreakable = false;
     private int amount = 1;
+
+    public static ItemBuilder ofType(Material material) {
+        return new ItemBuilder(material);
+    }
 
     public ItemBuilder displayName(String displayName) {
         this.displayName = displayName;
@@ -39,11 +41,17 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder setUnbreakable() {
+        isUnbreakable = true;
+        return this;
+    }
+
     public ItemStack build() {
         var itemStack = new ItemStack(material).asQuantity(amount);
         var itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(displayName);
         itemMeta.setLore(lore);
+        itemMeta.setUnbreakable(isUnbreakable);
         if (isEnchanted) {
             itemMeta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
         }

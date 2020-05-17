@@ -11,10 +11,11 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import lombok.Getter;
 import lombok.Setter;
-import net.danielrickman.api.player.CorePlayer;
-import net.danielrickman.api.util.MapLocation;
+import net.danielrickman.api.map.MapLocation;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,21 +48,13 @@ public class Hologram {
         this(text, MapLocation.fromWorldLocation(location));
     }
 
-    public void spawnEntity(CorePlayer cp) {
-        spawnEntity(cp.getPlayer());
+    public void spawnEntity(Player player) {
+        sendPacket(player, getEntitySpawnPacket());
+        sendPacket(player, getArmorStandMetadataPacket());
     }
 
-    public void spawnEntity(Player p) {
-        sendPacket(p, getEntitySpawnPacket());
-        sendPacket(p, getArmorStandMetadataPacket());
-    }
-
-    public void destroyEntity(CorePlayer cp) {
-        destroyEntity(cp.getPlayer());
-    }
-
-    public void destroyEntity(Player p) {
-        sendPacket(p, getEntityDestroyPacket());
+    public void destroyEntity(Player player) {
+        sendPacket(player, getEntityDestroyPacket());
     }
 
     private void sendPacket(Player player, PacketContainer packet) {

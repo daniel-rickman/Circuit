@@ -6,10 +6,9 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 @RequiredArgsConstructor
-public class HelixEffectTask extends BukkitRunnable {
+public class HelixEffectTask implements Runnable {
 
     private final Player player;
     private final Location location;
@@ -28,7 +27,7 @@ public class HelixEffectTask extends BukkitRunnable {
         location.add(x, y, z);
         new ParticleBuilder(particle).location(location).color(color).receivers(player).spawn();
         location.subtract(x, y, z);
-        if (t > 10) {
+        if (t > 15) {
             t = 0;
         }
     }

@@ -6,6 +6,7 @@ import net.danielrickman.api.util.Timer;
 
 public abstract class TimedState extends State {
 
+    @Getter
     private final CircuitPlugin plugin;
     @Getter
     private final Timer timer;
