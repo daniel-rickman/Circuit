@@ -15,6 +15,7 @@ public class ItemBuilder {
     private String displayName = " ";
     private final List<String> lore = new ArrayList<>();
     private boolean isEnchanted = false, isUnbreakable = false;
+    private Enchantment enchantment;
     private int amount = 1;
 
     public static ItemBuilder ofType(Material material) {
@@ -38,6 +39,13 @@ public class ItemBuilder {
 
     public ItemBuilder enchant() {
         this.isEnchanted = true;
+        this.enchantment = Enchantment.DAMAGE_ALL;
+        return this;
+    }
+
+    public ItemBuilder enchant(Enchantment enchantment) {
+        this.isEnchanted = true;
+        this.enchantment = enchantment;
         return this;
     }
 
@@ -53,7 +61,7 @@ public class ItemBuilder {
         itemMeta.setLore(lore);
         itemMeta.setUnbreakable(isUnbreakable);
         if (isEnchanted) {
-            itemMeta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+            itemMeta.addEnchant(enchantment, 1, true);
         }
         itemStack.setItemMeta(itemMeta);
         return itemStack;

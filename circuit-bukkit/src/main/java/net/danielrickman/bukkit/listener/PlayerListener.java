@@ -69,7 +69,7 @@ public class PlayerListener extends CircuitListener {
         newPlayer.teleport(lobbyMap.getConfiguration().getSpawnLocation().toWorldLocation(lobbyMap.getWorld()).toCenterLocation());
         newPlayer.setPlayerListName(Rank.getFormattedName(newPlayer));
         lobby.setSidebar(newPlayer.getUniqueId(), new LobbySidebar(newPlayer, circuit, global).initialise());
-        new HologramSpawnTask(newPlayer, lobbyMap.getConfiguration()).run();
+        new HologramSpawnTask(circuit, newPlayer, lobbyMap.getConfiguration()).run();
 
         if (Rank.get(newPlayer) == Rank.OP) {
             OperatorInventory.giveAll(newPlayer);

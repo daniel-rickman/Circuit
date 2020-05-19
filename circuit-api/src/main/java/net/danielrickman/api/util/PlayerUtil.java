@@ -30,6 +30,7 @@ public class PlayerUtil {
         player.setHealth(20.0);
         player.getInventory().clear();
         player.setGameMode(GameMode.ADVENTURE);
+        player.setLevel(0);
     }
 
     public void forEach(Consumer<? super Player> consumer) {

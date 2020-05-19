@@ -57,8 +57,10 @@ public class MapLoader {
             }
 
             if (Bukkit.getWorld(module.getIdentifier()) != null) {
+                File worldFolder = new File(worldContainerPath + "/" + module.getIdentifier());
                 Logger.mapInfo("World called %s already exists. Removing it...", module.getIdentifier());
                 Bukkit.unloadWorld(module.getIdentifier(), false);
+                worldFolder.delete();
             }
             Logger.mapInfo("Creating world %s", module.getIdentifier());
             World world = new WorldCreator(module.getIdentifier())

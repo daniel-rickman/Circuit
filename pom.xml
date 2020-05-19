@@ -12,6 +12,7 @@
         <module>circuit-api</module>
         <module>circuit-bukkit</module>
         <module>circuit-oitq</module>
+        <module>circuit-rainbowrun</module>
     </modules>
 
     <build>

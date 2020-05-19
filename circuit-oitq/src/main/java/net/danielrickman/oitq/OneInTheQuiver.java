@@ -14,7 +14,6 @@ import net.danielrickman.oitq.state.OITQPostGameState;
 import net.danielrickman.oitq.state.OITQPreGameState;
 import org.bukkit.ChatColor;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
 

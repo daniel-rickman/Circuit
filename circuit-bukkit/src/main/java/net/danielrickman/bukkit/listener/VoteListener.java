@@ -1,5 +1,6 @@
 package net.danielrickman.bukkit.listener;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.danielrickman.api.listener.CircuitListener;
 import net.danielrickman.api.plugin.CircuitGame;
@@ -54,7 +55,7 @@ public class VoteListener extends CircuitListener {
             voteMap.get(game).add(clicker.getUniqueId());
             clicker.playSound(clicker.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
             lobby.spawnVoteHologram(clicker.getUniqueId(), clicked, HOLOGRAM_TEXT);
-            lobby.spawnVoteParticleEffect(clicker.getUniqueId(), clicked.getStoredLocation().subtract(0, 1.5, 0));
+            lobby.spawnVoteParticleEffect(clicker.getUniqueId(), clicked.getEntity().getLocation());
             PlayerUtil.sendMessage(
                     clicker,
                     CircuitPrefix.VOTE.getPrefix() + "Vote received. You've voted for " + ChatColor.YELLOW + "%s" + ChatColor.WHITE + "." + ChatColor.GRAY + " (%d votes)",
@@ -81,17 +82,20 @@ public class VoteListener extends CircuitListener {
         PlayerUtil.sendMessage(e.getPlayer(), CircuitPrefix.ADMIN.getPrefix() + "Attempting to start the game.");
         PlayerUtil.sendToAll(CircuitPrefix.VOTE.getPrefix() + "Voting has ended!");
         PlayerUtil.sendToAll("The next game will be " + ChatColor.YELLOW + "%s " + ChatColor.WHITE + ".", getTopVotedGame().getStrippedName());
+        PlayerUtil.sendToAll(ChatColor.ITALIC + "You will be teleported to the game map in a few moments...");
 
         PlayerUtil.forEach(player -> lobby.onVoteEnd(player.getUniqueId()));
 
-        if (circuit.getMapRepository().getMap(topVoted) == null) {
-            Logger.error("No maps found for game: %s", topVoted.getStrippedName());
-            PlayerUtil.sendToAll(CircuitPrefix.ADMIN.getPrefix() + "Error starting game, we're staying where we are.");
-            circuit.queuePreGame();
-        } else {
-            circuit.queueGame(topVoted);
-        }
-        circuit.nextState();
+        Bukkit.getScheduler().runTaskLater(circuit, task -> {
+            if (circuit.getMapRepository().getMap(topVoted) == null) {
+                Logger.error("No maps found for game: %s", topVoted.getStrippedName());
+                PlayerUtil.sendToAll(CircuitPrefix.ADMIN.getPrefix() + "Error starting game, we're staying where we are.");
+                circuit.queuePreGame();
+            } else {
+                circuit.queueGame(topVoted);
+            }
+            circuit.nextState();
+        }, 40);
     }
 
     private CircuitGame getTopVotedGame() {

@@ -13,8 +13,6 @@ import net.danielrickman.api.util.Logger;
 import net.danielrickman.bukkit.repository.LobbyRepository;
 import net.danielrickman.bukkit.state.PreGameState;
 
-import java.util.List;
-
 public class Circuit extends CircuitPlugin {
 
     @Inject
