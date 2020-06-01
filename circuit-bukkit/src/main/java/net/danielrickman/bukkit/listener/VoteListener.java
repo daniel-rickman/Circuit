@@ -1,28 +1,27 @@
 package net.danielrickman.bukkit.listener;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.danielrickman.api.listener.CircuitListener;
 import net.danielrickman.api.plugin.CircuitGame;
 import net.danielrickman.api.util.CircuitPrefix;
+import net.danielrickman.api.util.CollectionUtil;
 import net.danielrickman.api.util.Logger;
 import net.danielrickman.api.util.PlayerUtil;
 import net.danielrickman.bukkit.Circuit;
-import net.danielrickman.bukkit.inventory.OperatorInventory;
 import net.danielrickman.bukkit.repository.LobbyRepository;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.*;
 
 public class VoteListener extends CircuitListener {
 
-    public final HashMap<CircuitGame, List<UUID>> voteMap = new HashMap<>();
+    private final HashMap<CircuitGame, List<UUID>> voteMap = new HashMap<>();
     private final Circuit circuit;
     private final LobbyRepository lobby;
+
     private boolean isActive = true;
 
     public VoteListener(Circuit circuit, LobbyRepository lobby) {
@@ -33,8 +32,8 @@ public class VoteListener extends CircuitListener {
     }
 
     @EventHandler
-    private void on(NPCRightClickEvent e) {
-        final var HOLOGRAM_TEXT = ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD.toString() + "YOUR VOTE!";
+    private void onMapVote(NPCRightClickEvent e) {
+        final var HOLOGRAM_TEXT = ChatColor.GOLD.toString() + ChatColor.BOLD.toString() + "YOUR VOTE!";
         final var clicker = e.getClicker();
         final var clicked = e.getNPC();
 
@@ -52,10 +51,11 @@ public class VoteListener extends CircuitListener {
                 clicker.playSound(clicker.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 1.0f, 0.1f);
                 return;
             }
+            final var configNPC = circuit.getLobbyMap().getConfiguration().getNPCByGameID(game.getIdentifier());
             voteMap.get(game).add(clicker.getUniqueId());
             clicker.playSound(clicker.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
             lobby.spawnVoteHologram(clicker.getUniqueId(), clicked, HOLOGRAM_TEXT);
-            lobby.spawnVoteParticleEffect(clicker.getUniqueId(), clicked.getEntity().getLocation());
+            lobby.spawnVoteParticleEffect(clicker.getUniqueId(), clicked.getEntity().getLocation(), (configNPC.isPresent()) ? configNPC.get().getColor() : Color.WHITE);
             PlayerUtil.sendMessage(
                     clicker,
                     CircuitPrefix.VOTE.getPrefix() + "Vote received. You've voted for " + ChatColor.YELLOW + "%s" + ChatColor.WHITE + "." + ChatColor.GRAY + " (%d votes)",
@@ -66,25 +66,37 @@ public class VoteListener extends CircuitListener {
     }
 
     @EventHandler
-    private void on(PlayerInteractEvent e) {
-        if (!OperatorInventory.START_ITEM.matches(e.getItem())) {
+    private void onGameStart(NPCRightClickEvent e) {
+        var clicker = e.getClicker();
+        if (e.getNPC().getEntity().getType() != EntityType.SHEEP) {
             return;
         }
-        if (!isActive) { //Player can't start game twice
+        if (!e.getClicker().isOp()) {
+            PlayerUtil.sendMessage(clicker, CircuitPrefix.ADMIN.getPrefix() + "Only Admins can start games!");
+            return;
+        }
+        if (!isActive) {
             return;
         }
         if (Bukkit.getOnlinePlayers().size() < 2) {
-            PlayerUtil.sendMessage(e.getPlayer(), CircuitPrefix.ADMIN.getPrefix() + ChatColor.RED.toString() + "Games require at least 2 players to start.");
+            PlayerUtil.sendMessage(clicker, CircuitPrefix.ADMIN.getPrefix() + ChatColor.RED.toString() + "Games require at least 2 players to start.");
             return;
         }
-        var topVoted = getTopVotedGame();
-        isActive = false;
-        PlayerUtil.sendMessage(e.getPlayer(), CircuitPrefix.ADMIN.getPrefix() + "Attempting to start the game.");
-        PlayerUtil.sendToAll(CircuitPrefix.VOTE.getPrefix() + "Voting has ended!");
-        PlayerUtil.sendToAll("The next game will be " + ChatColor.YELLOW + "%s " + ChatColor.WHITE + ".", getTopVotedGame().getStrippedName());
-        PlayerUtil.sendToAll(ChatColor.ITALIC + "You will be teleported to the game map in a few moments...");
+        CircuitGame topVoted = CollectionUtil.getTopEntriesByElements(voteMap).get(0).getKey();
+        Sheep sheepNPC = (Sheep) e.getNPC().getEntity();
 
-        PlayerUtil.forEach(player -> lobby.onVoteEnd(player.getUniqueId()));
+        isActive = false;
+        sheepNPC.setColor(DyeColor.GREEN);
+
+        PlayerUtil.sendMessage(clicker, CircuitPrefix.ADMIN.getPrefix() + "Attempting to start the game.");
+        PlayerUtil.sendToAll(CircuitPrefix.VOTE.getPrefix() + "Voting has ended!");
+        PlayerUtil.sendToAll(CircuitPrefix.CIRCUIT.getPrefix() + "The next game will be " + ChatColor.YELLOW + "%s " + ChatColor.WHITE + ".", topVoted.getStrippedName());
+        PlayerUtil.sendToAll(CircuitPrefix.CIRCUIT.getPrefix() + ChatColor.ITALIC + "You will be teleported to the game map in a few moments...");
+
+        PlayerUtil.forEach(player -> {
+            lobby.onVoteEnd(player.getUniqueId());
+            player.playSound(player.getEyeLocation(), Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 0.5f, 0.5f);
+        });
 
         Bukkit.getScheduler().runTaskLater(circuit, task -> {
             if (circuit.getMapRepository().getMap(topVoted) == null) {
@@ -96,15 +108,5 @@ public class VoteListener extends CircuitListener {
             }
             circuit.nextState();
         }, 40);
-    }
-
-    private CircuitGame getTopVotedGame() {
-        CircuitGame topVoted = null;
-        for (Map.Entry<CircuitGame, List<UUID>> entry : voteMap.entrySet()) {
-            if (topVoted == null || entry.getValue().size() > voteMap.get(topVoted).size()) {
-                topVoted = entry.getKey();
-            }
-        }
-        return topVoted;
     }
 }

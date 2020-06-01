@@ -1,58 +1,54 @@
 package net.danielrickman.oitq.state;
 
 import net.danielrickman.api.listener.CircuitListener;
+import net.danielrickman.api.listener.generic.GenericDisallowJoinListener;
+import net.danielrickman.api.listener.generic.GenericEliminationListener;
 import net.danielrickman.api.plugin.CircuitPlugin;
-import net.danielrickman.api.repository.GlobalRepository;
 import net.danielrickman.api.state.TimedState;
 import net.danielrickman.api.util.PlayerUtil;
 import net.danielrickman.oitq.OneInTheQuiver;
-import net.danielrickman.oitq.listener.game.OITQGameCombatListener;
-import net.danielrickman.oitq.listener.game.OITQGamePlayerListener;
-import net.danielrickman.oitq.listener.game.OITQGameTransitionListener;
-import net.danielrickman.oitq.listener.game.OITQGameWorldListener;
-import net.danielrickman.oitq.repository.OITQRepository;
+import net.danielrickman.oitq.listener.OITQGameListener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static net.danielrickman.oitq.OneInTheQuiver.GAME_STATE_DURATION;
+
 public class OITQGameState extends TimedState {
 
-    private final OneInTheQuiver oitq;
-    private final GlobalRepository global;
-    private final OITQRepository stats;
+    private final OneInTheQuiver game;
 
-    public OITQGameState(CircuitPlugin plugin, OneInTheQuiver oitq, GlobalRepository global, OITQRepository stats) {
-        super(plugin, 600);
-        this.oitq = oitq;
-        this.global = global;
-        this.stats = stats;
+    public OITQGameState(CircuitPlugin plugin, OneInTheQuiver game) {
+        super(plugin, GAME_STATE_DURATION);
+        this.game = game;
     }
 
     @Override
     public List<CircuitListener> getListeners() {
         return Arrays.asList(
-                new OITQGameCombatListener(getPlugin(), oitq, global, stats),
-                new OITQGamePlayerListener(getPlugin(), oitq, global, stats),
-                new OITQGameTransitionListener(getPlugin(), oitq, global),
-                new OITQGameWorldListener(getPlugin())
+                new OITQGameListener(getPlugin(), game, game.getStats()),
+                new GenericDisallowJoinListener(getPlugin()),
+                new GenericEliminationListener(getPlugin(), game)
         );
     }
 
     @Override
     public void onTimerTick() {
         var timer = getTimer();
-        var alivePlayers = PlayerUtil.getAlivePlayers(global);
+        var alivePlayers = PlayerUtil.getAlivePlayers(getPlugin().getGlobalRepository());
         if (alivePlayers.size() < 2) {
             getPlugin().nextState();
         } else {
             PlayerUtil.forEach(player -> {
-                oitq.getStats().getSidebar(player.getUniqueId()).updateTimer(timer);
+                game.getStats().getSidebar(player.getUniqueId()).updateTimer(timer);
             });
-            //alivePlayers.forEach(player -> {
-            //    if (timer.getTimeLeft() % 5 == 0) {
-            //        //todo Glowing
-            //    }
-            //});
+            alivePlayers.forEach(player -> {
+                if (timer.getTimeLeft() % 5 == 0) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
+                }
+            });
         }
     }
 }

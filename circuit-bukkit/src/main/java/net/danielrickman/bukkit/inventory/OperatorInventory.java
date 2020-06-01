@@ -12,8 +12,7 @@ import org.bukkit.inventory.ItemStack;
 @RequiredArgsConstructor
 public enum OperatorInventory {
 
-    START_ITEM(3, ChatColor.RED + "Start" + ChatColor.GRAY + " (Use when ready)", Material.REDSTONE, 1),
-    RELOAD_MAPS_ITEM(5, ChatColor.BLUE + "Reload Maps", Material.MAGMA_CREAM, 1);
+    RELOAD_MAPS_ITEM(4, ChatColor.BLUE + "Reload Maps", Material.MAGMA_CREAM, 1);
 
     private final int slot;
     private final String displayName;

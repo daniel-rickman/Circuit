@@ -2,6 +2,7 @@ package net.danielrickman.api.role;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.danielrickman.api.role.PlayerRole;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

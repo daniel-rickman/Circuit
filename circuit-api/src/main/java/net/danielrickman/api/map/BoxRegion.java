@@ -22,10 +22,6 @@ public class BoxRegion {
         return containsLocation(entity.getLocation());
     }
 
-    //public boolean containsBlock(World world, Material material) {
-    //    return getAllLocations(world).stream().anyMatch(location -> world.getBlockAt(location).getType() == material);
-    //}
-
     public List<Location> getBlocksOfType(World world, List<Material> materials) {
         List<Location> locations = new ArrayList<>();
         getAllLocations(world)

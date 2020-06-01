@@ -6,6 +6,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -14,8 +15,8 @@ public class ItemBuilder {
     private final Material material;
     private String displayName = " ";
     private final List<String> lore = new ArrayList<>();
-    private boolean isEnchanted = false, isUnbreakable = false;
-    private Enchantment enchantment;
+    private boolean isUnbreakable = false;
+    private final HashMap<Enchantment, Integer> enchantmentMap = new HashMap<>();
     private int amount = 1;
 
     public static ItemBuilder ofType(Material material) {
@@ -37,15 +38,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder enchant() {
-        this.isEnchanted = true;
-        this.enchantment = Enchantment.DAMAGE_ALL;
-        return this;
-    }
-
-    public ItemBuilder enchant(Enchantment enchantment) {
-        this.isEnchanted = true;
-        this.enchantment = enchantment;
+    public ItemBuilder enchant(Enchantment enchantment, Integer level) {
+        enchantmentMap.put(enchantment, level);
         return this;
     }
 
@@ -60,8 +54,8 @@ public class ItemBuilder {
         itemMeta.setDisplayName(displayName);
         itemMeta.setLore(lore);
         itemMeta.setUnbreakable(isUnbreakable);
-        if (isEnchanted) {
-            itemMeta.addEnchant(enchantment, 1, true);
+        if (!enchantmentMap.isEmpty()) {
+            enchantmentMap.forEach((key, value) -> itemMeta.addEnchant(key, value, true));
         }
         itemStack.setItemMeta(itemMeta);
         return itemStack;

@@ -9,6 +9,7 @@ import net.danielrickman.api.util.Logger;
 import net.danielrickman.api.util.RandomUtil;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -17,6 +18,7 @@ import org.bukkit.WorldCreator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -57,10 +59,14 @@ public class MapLoader {
             }
 
             if (Bukkit.getWorld(module.getIdentifier()) != null) {
-                File worldFolder = new File(worldContainerPath + "/" + module.getIdentifier());
-                Logger.mapInfo("World called %s already exists. Removing it...", module.getIdentifier());
-                Bukkit.unloadWorld(module.getIdentifier(), false);
-                worldFolder.delete();
+                try {
+                    File worldFolder = new File(worldContainerPath + "/" + module.getIdentifier());
+                    Logger.mapInfo("World called %s already exists. Removing it...", module.getIdentifier());
+                    Bukkit.unloadWorld(module.getIdentifier(), false);
+                    FileUtils.deleteDirectory(worldFolder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             Logger.mapInfo("Creating world %s", module.getIdentifier());
             World world = new WorldCreator(module.getIdentifier())

@@ -2,12 +2,11 @@ package net.danielrickman.api.plugin;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.danielrickman.api.annotation.Game;
 import net.danielrickman.api.map.Map;
 import net.danielrickman.api.map.MapConfiguration;
 import net.danielrickman.api.map.MapLoader;
 import net.danielrickman.api.map.MapRepository;
-import net.danielrickman.api.map.pregame.LobbyConfiguration;
+import net.danielrickman.api.map.lobby.LobbyConfiguration;
 import net.danielrickman.api.repository.GlobalRepository;
 import net.danielrickman.api.state.State;
 import net.danielrickman.api.util.ClassUtil;
@@ -15,9 +14,9 @@ import net.danielrickman.api.util.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -88,6 +87,11 @@ public abstract class CircuitPlugin extends JavaPlugin implements ICircuitModule
             currentState.stop();
         }
         currentState = states.removeFirst();
-        currentState.start();
+        Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+            @Override
+            public void run() {
+                currentState.start();
+            }
+        }, currentState.getDelay());
     }
 }

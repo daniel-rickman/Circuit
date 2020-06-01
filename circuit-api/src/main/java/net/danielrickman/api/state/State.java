@@ -1,6 +1,7 @@
 package net.danielrickman.api.state;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.danielrickman.api.listener.CircuitListener;
 import net.danielrickman.api.state.event.StateEndEvent;
 import net.danielrickman.api.state.event.StateStartEvent;
@@ -13,7 +14,17 @@ import java.util.List;
 
 public abstract class State {
 
+    @Getter
+    private final int delay;
     private final List<CircuitListener> listeners = new ArrayList<>();
+
+    public State() {
+        this(0);
+    }
+
+    public State(int delay) {
+        this.delay = delay;
+    }
 
     public void start() {
         Logger.info("Started state: %s", getClass().getSimpleName());

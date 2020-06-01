@@ -10,9 +10,11 @@
     <version>1.0</version>
     <modules>
         <module>circuit-api</module>
-        <module>circuit-bukkit</module>
         <module>circuit-oitq</module>
         <module>circuit-rainbowrun</module>
+        <module>circuit-buried</module>
+        <module>circuit-bukkit</module>
+        <module>circuit-bmt</module>
     </modules>
 
     <build>

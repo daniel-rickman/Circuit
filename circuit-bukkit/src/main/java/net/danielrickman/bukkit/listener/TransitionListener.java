@@ -21,11 +21,11 @@ public class TransitionListener extends CircuitListener {
     private final GlobalRepository global;
     private final LobbyRepository lobby;
 
-    public TransitionListener(Circuit circuit, GlobalRepository global, LobbyRepository lobby) {
+    public TransitionListener(Circuit circuit, LobbyRepository lobby) {
         super(circuit);
         this.circuit = circuit;
-        this.global = global;
         this.lobby = lobby;
+        this.global = circuit.getGlobalRepository();
     }
 
     @EventHandler

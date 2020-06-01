@@ -13,7 +13,7 @@ public class LobbySidebarObjective implements IObjective {
 
     @Override
     public String getDisplayName() {
-        return ChatColor.GOLD.toString() + ChatColor.BOLD.toString() + "MINIGAMES";
+        return ChatColor.GOLD.toString() + ChatColor.BOLD.toString() + "CIRCUIT";
     }
 
     @Override

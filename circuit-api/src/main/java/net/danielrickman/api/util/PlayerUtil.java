@@ -1,6 +1,7 @@
 package net.danielrickman.api.util;
 
 import lombok.experimental.UtilityClass;
+import net.danielrickman.api.rank.Rank;
 import net.danielrickman.api.repository.GlobalRepository;
 import net.danielrickman.api.role.PlayerRole;
 import org.bukkit.Bukkit;
@@ -31,6 +32,7 @@ public class PlayerUtil {
         player.getInventory().clear();
         player.setGameMode(GameMode.ADVENTURE);
         player.setLevel(0);
+        player.setPlayerListName(Rank.getFormattedName(player));
     }
 
     public void forEach(Consumer<? super Player> consumer) {

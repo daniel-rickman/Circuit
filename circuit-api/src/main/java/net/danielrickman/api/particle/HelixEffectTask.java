@@ -14,7 +14,7 @@ public class HelixEffectTask implements Runnable {
     private final Location location;
     private final int radius;
     private final Particle particle;
-    private final Color color; //Ignored for some particle effects
+    private final Color color;
 
     private double t = 0;
 

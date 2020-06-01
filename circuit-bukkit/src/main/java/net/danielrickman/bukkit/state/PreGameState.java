@@ -1,7 +1,6 @@
 package net.danielrickman.bukkit.state;
 
 import net.danielrickman.api.listener.CircuitListener;
-import net.danielrickman.api.repository.GlobalRepository;
 import net.danielrickman.api.state.SimpleState;
 import net.danielrickman.bukkit.Circuit;
 import net.danielrickman.bukkit.listener.MapListener;
@@ -15,13 +14,11 @@ import java.util.List;
 public class PreGameState extends SimpleState {
 
     private final Circuit circuit;
-    private final GlobalRepository global;
     private final LobbyRepository lobby;
 
-    public PreGameState(Circuit circuit, GlobalRepository global, LobbyRepository lobby) {
+    public PreGameState(Circuit circuit, LobbyRepository lobby) {
         super(circuit);
         this.circuit = circuit;
-        this.global = global;
         this.lobby = lobby;
     }
 
@@ -29,8 +26,8 @@ public class PreGameState extends SimpleState {
     public List<CircuitListener> getListeners() {
         return List.of(
                 new MapListener(circuit),
-                new PlayerListener(circuit, global, lobby),
-                new TransitionListener(circuit, global, lobby),
+                new PlayerListener(circuit, lobby),
+                new TransitionListener(circuit, lobby),
                 new VoteListener(circuit, lobby)
         );
     }

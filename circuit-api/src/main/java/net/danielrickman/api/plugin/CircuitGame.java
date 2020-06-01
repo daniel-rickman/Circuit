@@ -53,4 +53,6 @@ public abstract class CircuitGame implements ICircuitModule {
     public final <T extends MapConfiguration> T getMapConfiguration() {
         return (T) getMapConfigurationClass().cast(mapRepository.getMap(this).getConfiguration());
     }
+
+    public abstract GameObjective getGameObjective();
 }

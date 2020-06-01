@@ -24,6 +24,16 @@
             <version>1.0</version>
         </dependency>
         <dependency>
+            <groupId>net.danielrickman</groupId>
+            <artifactId>circuit-buried</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.danielrickman</groupId>
+            <artifactId>circuit-bmt</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens</artifactId>
             <version>2.0.26-SNAPSHOT</version>

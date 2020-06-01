@@ -1,13 +1,13 @@
 package net.danielrickman.oitq;
 
 import lombok.Getter;
-import net.danielrickman.api.annotation.Game;
+import net.danielrickman.api.plugin.Game;
 import net.danielrickman.api.map.MapConfiguration;
 import net.danielrickman.api.map.MapRepository;
 import net.danielrickman.api.plugin.CircuitGame;
 import net.danielrickman.api.plugin.CircuitPlugin;
+import net.danielrickman.api.plugin.GameObjective;
 import net.danielrickman.api.state.State;
-import net.danielrickman.oitq.configuration.OITQMapConfiguration;
 import net.danielrickman.oitq.repository.OITQRepository;
 import net.danielrickman.oitq.state.OITQGameState;
 import net.danielrickman.oitq.state.OITQPostGameState;
@@ -19,6 +19,10 @@ import java.util.List;
 
 @Game
 public class OneInTheQuiver extends CircuitGame {
+
+    public static final int PRE_GAME_STATE_DURATION = 8;
+    public static final int GAME_STATE_DURATION = 600;
+    public static final int POST_GAME_STATE_DURATION = 8;
 
     public static final int LIVES = 4;
     public static final int POINTS_PER_KILL = 10;
@@ -65,11 +69,16 @@ public class OneInTheQuiver extends CircuitGame {
     }
 
     @Override
+    public GameObjective getGameObjective() {
+        return GameObjective.MOST_POINTS;
+    }
+
+    @Override
     public List<State> getStates() {
         return List.of(
                 new OITQPreGameState(getPlugin(), this),
-                new OITQGameState(getPlugin(), this, getPlugin().getGlobalRepository(), stats),
-                new OITQPostGameState(getPlugin(), this, stats)
+                new OITQGameState(getPlugin(), this),
+                new OITQPostGameState(getPlugin(), this)
         );
     }
 }

@@ -7,9 +7,15 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.trait.SkinTrait;
+import net.citizensnpcs.trait.WoolColor;
+import net.danielrickman.api.map.lobby.SkinTexture;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
+import org.bukkit.material.Colorable;
 
 import java.util.Optional;
 
@@ -20,6 +26,8 @@ public class NPCBuilder {
     private String displayName = "NPC";
     private String uuid, texture, signature;
     private boolean hasHiddenName = false;
+    private DyeColor color;
+    private boolean hasNoAI = false;
 
     public static NPCBuilder of(EntityType type) {
         return new NPCBuilder(type);
@@ -32,6 +40,15 @@ public class NPCBuilder {
     public NPCBuilder withName(String displayName, boolean hasHiddenName) {
         this.displayName = displayName;
         this.hasHiddenName = hasHiddenName;
+        return this;
+    }
+
+    public NPCBuilder withSkin(SkinTexture skinTexture) {
+        if (skinTexture != null) {
+            this.uuid = skinTexture.getUuid();
+            this.texture = skinTexture.getData();
+            this.signature = skinTexture.getSignature();
+        }
         return this;
     }
 
@@ -53,6 +70,16 @@ public class NPCBuilder {
         return this;
     }
 
+    public NPCBuilder withColour(DyeColor color) {
+        this.color = color;
+        return this;
+    }
+
+    public NPCBuilder withNoAI() {
+        this.hasNoAI = true;
+        return this;
+    }
+
     public void spawnEntity(Location location) {
         var npc = CitizensAPI.getNPCRegistry().createNPC(type, displayName);
         if (npc.getTrait(MobType.class).getType() == EntityType.PLAYER && uuid != null && signature != null && texture != null) {
@@ -62,7 +89,10 @@ public class NPCBuilder {
         if (hasHiddenName) {
             npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
         }
-
+        npc.setUseMinecraftAI(hasNoAI);
         npc.spawn(location);
+        if (npc.getEntity() instanceof Colorable) {
+            ((Colorable) npc.getEntity()).setColor((color != null) ? color : DyeColor.WHITE);
+        }
     }
 }

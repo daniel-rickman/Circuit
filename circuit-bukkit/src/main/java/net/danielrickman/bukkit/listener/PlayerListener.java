@@ -5,6 +5,7 @@ import net.danielrickman.api.rank.Rank;
 import net.danielrickman.api.repository.GlobalRepository;
 import net.danielrickman.api.util.CircuitPrefix;
 import net.danielrickman.api.util.PlayerUtil;
+import net.danielrickman.api.util.RandomUtil;
 import net.danielrickman.bukkit.Circuit;
 import net.danielrickman.bukkit.inventory.OperatorInventory;
 import net.danielrickman.bukkit.repository.LobbyRepository;
@@ -34,11 +35,16 @@ public class PlayerListener extends CircuitListener {
     private final GlobalRepository global;
     private final LobbyRepository lobby;
 
-    public PlayerListener(Circuit circuit, GlobalRepository global, LobbyRepository lobby) {
+    public PlayerListener(Circuit circuit, LobbyRepository lobby) {
         super(circuit);
         this.circuit = circuit;
-        this.global = global;
         this.lobby = lobby;
+        this.global = circuit.getGlobalRepository();
+    }
+
+    @EventHandler
+    public void on(PlayerChangedWorldEvent e) { //Called when player returns to Lobby from Game
+        onLobbyEnter(e.getPlayer());
     }
 
     @EventHandler
@@ -53,11 +59,6 @@ public class PlayerListener extends CircuitListener {
     }
 
     @EventHandler
-    public void on(PlayerChangedWorldEvent e) { //Called when player returns to Lobby from Game
-        onLobbyEnter(e.getPlayer());
-    }
-
-    @EventHandler
     public void on(PlayerQuitEvent e) {
         PlayerUtil.sendToAll(ChatColor.GRAY.toString() + ChatColor.ITALIC + String.format("%s has left the game", e.getPlayer().getName()));
         PlayerUtil.forEach(existingPlayer -> lobby.getSidebar(existingPlayer.getUniqueId()).update());
@@ -65,10 +66,15 @@ public class PlayerListener extends CircuitListener {
 
     private void onLobbyEnter(Player newPlayer) {
         final var lobbyMap = circuit.getLobbyMap();
+        final var spawnLocations = lobbyMap.getConfiguration().getSpawnLocations();
         PlayerUtil.reset(newPlayer);
-        newPlayer.teleport(lobbyMap.getConfiguration().getSpawnLocation().toWorldLocation(lobbyMap.getWorld()).toCenterLocation());
-        newPlayer.setPlayerListName(Rank.getFormattedName(newPlayer));
-        lobby.setSidebar(newPlayer.getUniqueId(), new LobbySidebar(newPlayer, circuit, global).initialise());
+        if (spawnLocations.isEmpty()) {
+            newPlayer.teleport(lobbyMap.getWorld().getSpawnLocation());
+        } else {
+            newPlayer.teleport(RandomUtil.randomFrom(spawnLocations).toWorldLocation(lobbyMap.getWorld()));
+        }
+        newPlayer.setPlayerListName(Rank.getFormattedName(newPlayer) + ChatColor.GRAY + " [" + ChatColor.WHITE + global.getCoins(newPlayer.getUniqueId()) + ChatColor.GOLD + "\u26C3" + ChatColor.GRAY + "]");
+        lobby.setSidebar(newPlayer.getUniqueId(), new LobbySidebar(newPlayer, global).initialise());
         new HologramSpawnTask(circuit, newPlayer, lobbyMap.getConfiguration()).run();
 
         if (Rank.get(newPlayer) == Rank.OP) {

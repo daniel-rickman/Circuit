@@ -1,15 +1,15 @@
 package net.danielrickman.oitq.repository;
 
 import lombok.Data;
+import net.danielrickman.api.repository.profile.GameProfile;
 import net.danielrickman.api.repository.profile.IProfile;
 import net.danielrickman.oitq.OneInTheQuiver;
-import net.danielrickman.oitq.sidebar.OITQPlayerSidebar;
+import net.danielrickman.oitq.sidebar.OITQSidebar;
 
 @Data
-public class OITQProfile implements IProfile {
+public class OITQProfile extends GameProfile {
 
-    private OITQPlayerSidebar sidebar;
+    private OITQSidebar sidebar;
     private int lives = OneInTheQuiver.LIVES;
-    private int points = 0;
     private int kills = 0;
 }

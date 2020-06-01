@@ -16,6 +16,12 @@ public abstract class TimedState extends State {
         this.timer = new Timer(plugin, duration, this::onTimerTick, plugin::nextState);
     }
 
+    public TimedState(CircuitPlugin plugin, int duration, int delay) {
+        super(delay);
+        this.plugin = plugin;
+        this.timer = new Timer(plugin, duration, this::onTimerTick, plugin::nextState);
+    }
+
     public void start() {
         super.start();
         timer.start();

@@ -2,9 +2,12 @@ package net.danielrickman.api.map;
 
 import net.danielrickman.api.plugin.CircuitGame;
 import net.danielrickman.api.util.Logger;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 
 import javax.inject.Singleton;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 @Singleton

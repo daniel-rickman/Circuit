@@ -4,7 +4,6 @@ import net.danielrickman.api.rank.Rank;
 import net.danielrickman.api.repository.GlobalRepository;
 import net.danielrickman.api.scoreboard.Sidebar;
 import net.danielrickman.api.util.PlayerUtil;
-import net.danielrickman.bukkit.Circuit;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,12 +11,10 @@ import org.bukkit.scoreboard.Team;
 
 public class LobbySidebar extends Sidebar {
 
-    private final Circuit circuit;
     private final GlobalRepository global;
 
-    public LobbySidebar(Player player, Circuit circuit, GlobalRepository global) {
+    public LobbySidebar(Player player, GlobalRepository global) {
         super(player);
-        this.circuit = circuit;
         this.global = global;
     }
 
@@ -38,7 +35,7 @@ public class LobbySidebar extends Sidebar {
     }
 
     /*
-    Warning suppressed for Line 55.
+    Warning suppressed for Line 51.
     There will always be a team on the scoreboard for each rank so an NPE will not be thrown (See #addTeams() above)
      */
     @SuppressWarnings("ConstantConditions")

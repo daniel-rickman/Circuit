@@ -40,12 +40,10 @@ public class LobbyRepository extends Repository<LobbyProfile> {
         hologram.spawnEntity(player);
     }
 
-    public void spawnVoteParticleEffect(UUID uuid, Location location) {
-        getPlayerMap()
-                .get(uuid)
-                .setVoteEffectTask(
-                        Bukkit.getScheduler().runTaskTimer(plugin, new HelixEffectTask(Bukkit.getPlayer(uuid), location, 1, Particle.REDSTONE, Color.YELLOW), 0, 2)
-                );
+    public void spawnVoteParticleEffect(UUID uuid, Location location, Color color) {
+        getPlayerMap().get(uuid).setVoteEffectTask(
+                Bukkit.getScheduler().runTaskTimer(plugin, new HelixEffectTask(Bukkit.getPlayer(uuid), location, 1, Particle.REDSTONE, color), 0, 2)
+        );
     }
 
     public void onVoteEnd(UUID uuid) {

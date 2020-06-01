@@ -3,13 +3,12 @@ package net.danielrickman.bukkit.task;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.danielrickman.api.hologram.Hologram;
-import net.danielrickman.api.map.pregame.LobbyConfiguration;
+import net.danielrickman.api.map.lobby.LobbyConfiguration;
 import net.danielrickman.api.rank.Rank;
 import net.danielrickman.bukkit.Circuit;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class HologramSpawnTask implements Runnable {
@@ -21,7 +20,7 @@ public class HologramSpawnTask implements Runnable {
     @Override
     public void run() {
         //Spawn holograms
-        lobby.getHologramTemplates().forEach(template -> {
+        lobby.getHolograms().forEach(template -> {
             var hologram = new Hologram(template.getText(), template.getMapLocation());
             if (hologram.getText().contains("{0}")) {
                 hologram.setText(MessageFormat.format(hologram.getText(), Rank.getFormattedName(player)));
