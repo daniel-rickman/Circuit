@@ -1,0 +1,6 @@
+main: dev.dancr.circuit.Circuit
+name: Circuit
+version: 1.0-SNAPSHOT
+api-version: 1.16
+load: POSTWORLD
+author: "Daniel Rickman"
