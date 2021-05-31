@@ -1,17 +1,12 @@
 package dev.dancr.circuit
 
-import org.bukkit.plugin.java.JavaPlugin
+import dev.dancr.circuit.component.LobbyLaunchComponent
+import dev.dancr.nexus.plugin.NexusPlugin
 
-class Circuit : JavaPlugin() {
+class Circuit : NexusPlugin() {
 
-    @Override
-    override fun onEnable() {
-        //
-    }
-
-    @Override
-    override fun onDisable() {
-        //
+    override fun onPluginEnable() {
+        LobbyLaunchComponent.enable()
     }
 
 }
