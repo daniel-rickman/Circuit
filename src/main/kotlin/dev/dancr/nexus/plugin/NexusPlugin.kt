@@ -1,29 +1,60 @@
 package dev.dancr.nexus.plugin
 
+import dev.dancr.nexus.component.DefaultChatComponent
 import dev.dancr.nexus.component.LobbySpawnComponent
-import dev.dancr.nexus.config.ConfigScanner
+import dev.dancr.nexus.data.PlayerData
+import dev.dancr.nexus.rank.Ranks
+import java.sql.Connection
 import org.bukkit.plugin.java.JavaPlugin
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
 
 open class NexusPlugin : JavaPlugin() {
 
     companion object {
+        private const val DATA_FILE_NAME = "data.db"
+
         public inline fun <reified T : JavaPlugin> getPlugin() = getPlugin(T::class.java)
     }
 
     final override fun onEnable() {
-        // Spawn player in lobby
-        LobbySpawnComponent.enable()
+        Database.connect("jdbc:sqlite:/${dataFolder.absolutePath}/$DATA_FILE_NAME")
+        transaction {
+            TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+        }
 
+        registerTables()
+        registerComponents()
+        registerCommands()
         onPluginEnable()
     }
 
-    open fun onPluginEnable() {}
+    protected open fun onPluginEnable() {}
 
     final override fun onDisable() {
         onPluginDisable()
     }
 
-    open fun onPluginDisable() {}
+    protected open fun onPluginDisable() {}
+
+    protected open fun registerTables() = transaction {
+        SchemaUtils.create(PlayerData)
+    }
+
+    protected open fun registerComponents() {
+        // Enable ranks
+        Ranks.enable()
+        // Enable default chat
+        DefaultChatComponent.enable()
+        // Spawn player in lobby
+        LobbySpawnComponent.enable()
+    }
+
+    protected open fun registerCommands() {
+
+    }
 
 
 
