@@ -19,7 +19,7 @@ object ConfigScanner {
         ClassGraph().enableAllInfo().acceptPackages(PACKAGE_PATH).scan().use {
             for (clazz in it.getClassesWithAnnotation(ANNOTATION_NAME)) {
                 val fileName = clazz.getAnnotationInfo(ANNOTATION_NAME).parameterValues.get("fileName").value as String
-                val fileReader = FileReader(getFile(fileName).absolutePath)
+                val fileReader = FileReader(getFile("$fileName.json").absolutePath)
 
                 configs[clazz.loadClass()] = Gson().fromJson(fileReader, clazz.loadClass())
 

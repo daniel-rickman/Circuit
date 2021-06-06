@@ -15,15 +15,15 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object Ranks : ServerComponent() {
+object RankManager : ServerComponent() {
 
-    @Config("ranks.json")
+    @Config("ranks")
     data class RankConfiguration(val ranks: List<PlayerRank>)
 
     data class PlayerRank(
         val name: String,
         val prefixColor: String,
-        val showPrefix: Boolean = true,
+        val showPrefix: Boolean,
         val isDefault: Boolean = false,
         val isAdmin: Boolean = false
     )
