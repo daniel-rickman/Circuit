@@ -7,7 +7,4 @@ import org.jetbrains.exposed.sql.Table
 object PlayerData : Table("player_data") {
     val uuid: Column<UUID> = uuid("uuid")
     val rank: Column<String> = varchar("rank", 16)
-
-
-
 }
