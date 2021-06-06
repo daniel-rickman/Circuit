@@ -19,6 +19,7 @@ object Ranks : ServerComponent() {
 
     @Config("ranks.json")
     data class RankConfiguration(val ranks: List<PlayerRank>)
+
     data class PlayerRank(
         val name: String,
         val prefixColor: String,
@@ -76,8 +77,6 @@ object Ranks : ServerComponent() {
     @EventHandler(priority = EventPriority.LOW)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         load(event.player.uniqueId)
-        if (isAdmin(event.player)) {
-            event.player.isOp = true
-        }
+        event.player.isOp = isAdmin(event.player)
     }
 }

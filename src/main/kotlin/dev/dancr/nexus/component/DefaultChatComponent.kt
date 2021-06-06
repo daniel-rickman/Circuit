@@ -36,5 +36,4 @@ object DefaultChatComponent : ServerComponent() {
                 .build()
         })
     }
-
 }
