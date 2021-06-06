@@ -8,7 +8,7 @@ import org.bukkit.WorldCreator
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 
-object LobbySpawnComponent : ServerComponent() {
+object LobbySpawning : ServerComponent() {
 
     @Config("lobby")
     data class LobbySpawnConfig(val worldName: String, val spawnPosition: Position)

@@ -1,9 +1,9 @@
 package dev.dancr.nexus.plugin
 
-import dev.dancr.nexus.component.DefaultChatComponent
-import dev.dancr.nexus.component.LobbySpawnComponent
+import dev.dancr.nexus.component.DefaultChat
+import dev.dancr.nexus.component.LobbySpawning
 import dev.dancr.nexus.data.PlayerData
-import dev.dancr.nexus.rank.RankManager
+import dev.dancr.nexus.rank.Ranks
 import java.sql.Connection
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
@@ -45,11 +45,11 @@ open class NexusPlugin : JavaPlugin() {
 
     protected open fun registerComponents() {
         // Enable ranks
-        RankManager.enable()
+        Ranks.enable()
         // Enable default chat
-        DefaultChatComponent.enable()
+        DefaultChat.enable()
         // Spawn player in lobby
-        LobbySpawnComponent.enable()
+        LobbySpawning.enable()
     }
 
     protected open fun registerCommands() {}

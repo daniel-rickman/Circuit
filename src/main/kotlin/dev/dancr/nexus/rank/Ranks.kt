@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object RankManager : ServerComponent() {
+object Ranks : ServerComponent() {
 
     @Config("ranks")
     data class RankConfiguration(val ranks: List<PlayerRank>)

@@ -1,9 +1,9 @@
 package dev.dancr.circuit
 
-import dev.dancr.circuit.component.LobbyLaunchComponent
+import dev.dancr.circuit.component.LobbyLaunching
 import dev.dancr.nexus.plugin.NexusPlugin
 import dev.dancr.nexus.component.WorldSettings
-import dev.dancr.nexus.team.TeamManager
+import dev.dancr.nexus.team.Teams
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.GameRule
@@ -15,9 +15,9 @@ class Circuit : NexusPlugin() {
         get() = Bukkit.getWorlds().first()
 
     override fun onPluginEnable() {
-        LobbyLaunchComponent.enable()
+        LobbyLaunching.enable()
         WorldSettings.enable()
-        TeamManager.enable()
+        Teams.enable()
 
         // World settings
         Bukkit.setDefaultGameMode(GameMode.ADVENTURE)

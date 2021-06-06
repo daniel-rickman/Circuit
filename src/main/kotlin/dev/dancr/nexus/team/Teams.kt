@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
-object TeamManager : ServerComponent() {
+object Teams : ServerComponent() {
 
     private val teamMap: MutableMap<Player, Team> = mutableMapOf()
     private var activeTeams: MutableList<Team> = mutableListOf()

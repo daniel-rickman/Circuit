@@ -1,7 +1,7 @@
 package dev.dancr.circuit.component
 
 import dev.dancr.nexus.component.ServerComponent
-import dev.dancr.nexus.component.LobbySpawnComponent
+import dev.dancr.nexus.component.LobbySpawning
 import dev.dancr.nexus.config.ConfigScanner
 import dev.dancr.nexus.util.playSoundAtHead
 import org.bukkit.Bukkit
@@ -9,12 +9,12 @@ import org.bukkit.Sound
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerTeleportEvent
 
-object LobbyLaunchComponent : ServerComponent() {
+object LobbyLaunching : ServerComponent() {
 
     private const val LAUNCH_VELOCITY = 3.0
     private const val LAUNCH_DELAY_TICKS = 25L
 
-    private val config = ConfigScanner.getConfig<LobbySpawnComponent.LobbySpawnConfig>()
+    private val config = ConfigScanner.getConfig<LobbySpawning.LobbySpawnConfig>()
 
     @EventHandler
     fun onPlayerTeleport(event: PlayerTeleportEvent) {
