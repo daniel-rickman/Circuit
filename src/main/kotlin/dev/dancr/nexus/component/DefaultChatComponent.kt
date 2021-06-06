@@ -24,8 +24,12 @@ object DefaultChatComponent : ServerComponent() {
         val rank = Ranks.getRank(player)
 
         event.renderer(ChatRenderer.viewerUnaware { _, sourceDisplayName, message ->
-            Component.text()
-                .append(Component.text("${rank.name} ").color(TextColor.fromHexString(rank.prefixColor)).decorate(TextDecoration.BOLD))
+            val component = Component.text()
+
+            if (rank.showPrefix) {
+                component.append(Component.text("${rank.name} ").color(TextColor.fromHexString(rank.prefixColor)).decorate(TextDecoration.BOLD))
+            }
+            component
                 .append(sourceDisplayName.color(NamedTextColor.WHITE))
                 .append(Component.text(" \u00BB ").color(NamedTextColor.GRAY))
                 .append(message)

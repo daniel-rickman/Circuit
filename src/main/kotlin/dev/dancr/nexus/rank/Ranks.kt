@@ -22,6 +22,7 @@ object Ranks : ServerComponent() {
     data class PlayerRank(
         val name: String,
         val prefixColor: String,
+        val showPrefix: Boolean = true,
         val isDefault: Boolean = false,
         val isAdmin: Boolean = false
     )
