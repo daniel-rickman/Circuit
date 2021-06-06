@@ -14,12 +14,14 @@ open class ServerComponent : Listener {
     public fun enable() {
         isEnabled = true
         Bukkit.getPluginManager().registerEvents(this, plugin)
+        Bukkit.getLogger().info("${this.javaClass.simpleName} is enabled")
         onComponentEnable()
     }
 
     public fun disable() {
         isEnabled = false
         HandlerList.unregisterAll(this)
+        Bukkit.getLogger().info("${this.javaClass.simpleName} is disabled")
         onComponentDisable()
     }
 
