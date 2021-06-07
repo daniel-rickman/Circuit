@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerTeleportEvent
 object LobbyLaunching : ServerComponent() {
 
     private const val LAUNCH_VELOCITY = 3.0
-    private const val LAUNCH_DELAY_TICKS = 25L
+    private const val LAUNCH_DELAY_TICKS = 20L
 
     private val config = ConfigScanner.getConfig<LobbySpawning.LobbySpawnConfig>()
 

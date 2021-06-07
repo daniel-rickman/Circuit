@@ -22,7 +22,7 @@ object WorldSettings : ServerComponent() {
 
     public fun modifyAll(isAllowed: Boolean) = worldSettings.replaceAll { _, _ -> isAllowed }
 
-    public fun isDisallowed(setting: Setting) : Boolean = worldSettings[setting]!!
+    public fun isDisallowed(setting: Setting) : Boolean = !worldSettings[setting]!!
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
