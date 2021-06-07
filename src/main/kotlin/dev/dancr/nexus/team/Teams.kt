@@ -1,9 +1,11 @@
 package dev.dancr.nexus.team
 
 import dev.dancr.nexus.component.ServerComponent
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
@@ -39,7 +41,7 @@ object Teams : ServerComponent() {
         activeTeams.removeIf { !it.isUnrestricted && !activeTeams.contains(it) }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         set(event.player, nextAvailableTeam(memberLimit))
     }
@@ -49,12 +51,14 @@ object Teams : ServerComponent() {
         teamMap -= event.player
     }
 
-    enum class Team(private val hexString: String, public val isUnrestricted: Boolean = false) {
-        RED("#FF5555"),
-        BLUE("#5555FF"),
-        GREEN("#55FF55"),
-        YELLOW("#DDD605"),
-        NONE("#AAAAAA", true);
+    enum class Team(private val hexString: String, private val namedTextColor: NamedTextColor, val isUnrestricted: Boolean = false) {
+        RED("#FF5555", NamedTextColor.RED),
+        BLUE("#5555FF", NamedTextColor.BLUE),
+        GREEN("#55FF55", NamedTextColor.GREEN),
+        YELLOW("#DDD605", NamedTextColor.YELLOW),
+        NONE("#AAAAAA", NamedTextColor.GRAY, true);
+
+        public fun getNamedTextColor() = namedTextColor
 
         public fun getTextColor() = TextColor.fromHexString(hexString)
     }

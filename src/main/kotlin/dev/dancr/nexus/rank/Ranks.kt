@@ -4,7 +4,12 @@ import dev.dancr.nexus.component.ServerComponent
 import dev.dancr.nexus.config.Config
 import dev.dancr.nexus.config.ConfigScanner
 import dev.dancr.nexus.data.PlayerData
+import dev.dancr.nexus.event.RankUpdateEvent
 import java.util.UUID
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 import org.bukkit.Bukkit.getOnlinePlayers
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -43,6 +48,7 @@ object Ranks : ServerComponent() {
             }
         }
         rankMap[uuid] = rank
+        Bukkit.getPlayer(uuid)?.let { RankUpdateEvent(it, rank).callEvent() }
     }
 
     public fun getRank(player: Player) : PlayerRank = rankMap[player.uniqueId] ?: getDefaultRank()
@@ -73,6 +79,8 @@ object Ranks : ServerComponent() {
 
     private fun getRankOrDefault(name: String): PlayerRank =
         config.ranks.firstOrNull { it.name == name } ?: getDefaultRank()
+
+    fun getPrefix(rank: PlayerRank): Component = Component.text("${rank.name} ").color(TextColor.fromHexString(rank.prefixColor)).decorate(TextDecoration.BOLD)
 
     @EventHandler(priority = EventPriority.LOW)
     fun onPlayerJoin(event: PlayerJoinEvent) {

@@ -2,6 +2,8 @@ package dev.dancr.nexus.plugin
 
 import dev.dancr.nexus.component.DefaultChat
 import dev.dancr.nexus.component.LobbySpawning
+import dev.dancr.nexus.component.NameTags
+import dev.dancr.nexus.component.ScoreboardCreation
 import dev.dancr.nexus.data.PlayerData
 import dev.dancr.nexus.rank.Ranks
 import java.sql.Connection
@@ -44,11 +46,10 @@ open class NexusPlugin : JavaPlugin() {
     }
 
     protected open fun registerComponents() {
-        // Enable ranks
         Ranks.enable()
-        // Enable default chat
+        ScoreboardCreation.enable()
+        NameTags.enable()
         DefaultChat.enable()
-        // Spawn player in lobby
         LobbySpawning.enable()
     }
 

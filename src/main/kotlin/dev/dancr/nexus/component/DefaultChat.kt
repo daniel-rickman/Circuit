@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 
@@ -29,7 +30,7 @@ object DefaultChat : ServerComponent() {
             val component = Component.text()
 
             if (rank.showPrefix) {
-                component.append(Component.text("${rank.name} ").color(TextColor.fromHexString(rank.prefixColor)).decorate(TextDecoration.BOLD))
+                component.append(Ranks.getPrefix(rank))
             }
             component.append(sourceDisplayName.color(if (Teams.isEnabled) team.getTextColor() else NamedTextColor.WHITE))
 
