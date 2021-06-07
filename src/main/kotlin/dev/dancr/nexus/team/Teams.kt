@@ -46,7 +46,7 @@ object Teams : ServerComponent() {
         set(event.player, nextAvailableTeam(memberLimit))
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerQuit(event: PlayerQuitEvent) {
         teamMap -= event.player
     }

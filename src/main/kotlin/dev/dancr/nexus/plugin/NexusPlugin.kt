@@ -1,6 +1,7 @@
 package dev.dancr.nexus.plugin
 
 import dev.dancr.nexus.component.DefaultChat
+import dev.dancr.nexus.component.DefaultJoin
 import dev.dancr.nexus.component.LobbySpawning
 import dev.dancr.nexus.component.NameTags
 import dev.dancr.nexus.component.ScoreboardCreation
@@ -50,6 +51,7 @@ open class NexusPlugin : JavaPlugin() {
         ScoreboardCreation.enable()
         NameTags.enable()
         DefaultChat.enable()
+        DefaultJoin.enable()
         LobbySpawning.enable()
     }
 

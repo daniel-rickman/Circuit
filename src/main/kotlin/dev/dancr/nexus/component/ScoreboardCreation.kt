@@ -3,6 +3,7 @@ package dev.dancr.nexus.component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scoreboard.DisplaySlot
@@ -28,7 +29,7 @@ object ScoreboardCreation : ServerComponent() {
         return scoreboard
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
         with(createScoreboard()) {
@@ -37,7 +38,7 @@ object ScoreboardCreation : ServerComponent() {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerQuit(event: PlayerQuitEvent) {
         val player = event.player
         scoreboardMap[player]!!.clearSlot(DisplaySlot.SIDEBAR)

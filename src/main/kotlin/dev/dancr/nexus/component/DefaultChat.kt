@@ -18,7 +18,7 @@ object DefaultChat : ServerComponent() {
         require(Ranks)
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
         if (!Ranks.isEnabled) return
 
