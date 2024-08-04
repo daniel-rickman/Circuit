@@ -1,4 +1,4 @@
-package dev.dancr.nexus.util
+package dev.dancr.circuit.util
 
 import org.bukkit.Sound
 import org.bukkit.entity.Player

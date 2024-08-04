@@ -1,4 +1,4 @@
-package dev.dancr.nexus.component
+package dev.dancr.circuit.component
 
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitTask

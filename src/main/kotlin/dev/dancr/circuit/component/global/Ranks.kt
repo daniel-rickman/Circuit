@@ -1,16 +1,14 @@
-package dev.dancr.nexus.rank
+package dev.dancr.circuit.component.global
 
-import dev.dancr.nexus.component.ServerComponent
-import dev.dancr.nexus.config.Config
-import dev.dancr.nexus.config.ConfigScanner
-import dev.dancr.nexus.data.PlayerData
-import dev.dancr.nexus.event.RankUpdateEvent
-import java.util.UUID
+import dev.dancr.circuit.component.ServerComponent
+import dev.dancr.circuit.config.Config
+import dev.dancr.circuit.config.ConfigScanner
+import dev.dancr.circuit.event.RankUpdateEvent
+import dev.dancr.circuit.player.PlayerData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-import org.bukkit.Bukkit.getOnlinePlayers
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -19,6 +17,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import java.util.*
 
 object Ranks : ServerComponent() {
 
@@ -34,11 +33,11 @@ object Ranks : ServerComponent() {
     )
 
     private val config = ConfigScanner.getConfig<RankConfiguration>()
-    private val rankMap: MutableMap<UUID, PlayerRank> = mutableMapOf()
+    private val ranks: MutableMap<UUID, PlayerRank> = mutableMapOf()
 
-    override fun onComponentEnable() = getOnlinePlayers().forEach { load(it.uniqueId) }
+    override fun onComponentEnable() = Bukkit.getOnlinePlayers().forEach { load(it.uniqueId) }
 
-    override fun onComponentDisable() = rankMap.clear()
+    override fun onComponentDisable() = ranks.clear()
 
     public fun update(uuid: UUID, rankName: String) {
         val rank = getRankOrDefault(rankName)
@@ -47,13 +46,13 @@ object Ranks : ServerComponent() {
                 it[PlayerData.rank] = rank.name
             }
         }
-        rankMap[uuid] = rank
-        Bukkit.getPlayer(uuid)?.let { RankUpdateEvent(it, rank).callEvent() }
+        Bukkit.getPlayer(uuid)?.let { RankUpdateEvent(it, ranks[uuid]!!, rank).callEvent() }
+        ranks[uuid] = rank
     }
 
-    public fun getRank(player: Player) : PlayerRank = rankMap[player.uniqueId] ?: getDefaultRank()
+    fun getRank(player: Player) : PlayerRank = ranks[player.uniqueId] ?: getDefaultRank()
 
-    public fun isAdmin(player: Player): Boolean = rankMap[player.uniqueId]?.isAdmin ?: player.isOp
+    fun isAdmin(player: Player): Boolean = ranks[player.uniqueId]?.isAdmin ?: player.isOp
 
     private fun load(uuid: UUID) = transaction {
         val query = PlayerData.slice(PlayerData.uuid, PlayerData.rank).select { PlayerData.uuid eq uuid }
@@ -62,7 +61,7 @@ object Ranks : ServerComponent() {
             insert(uuid)
         } else {
             query.first().apply {
-                rankMap[this[PlayerData.uuid]] = getRankOrDefault(this[PlayerData.rank])
+                ranks[this[PlayerData.uuid]] = getRankOrDefault(this[PlayerData.rank])
             }
         }
     }
@@ -72,7 +71,7 @@ object Ranks : ServerComponent() {
             it[PlayerData.uuid] = uuid
             it[PlayerData.rank] = getDefaultRank().name
         }
-        rankMap[uuid] = getDefaultRank()
+        ranks[uuid] = getDefaultRank()
     }
 
     private fun getDefaultRank(): PlayerRank = config.ranks.first { rank -> rank.isDefault }

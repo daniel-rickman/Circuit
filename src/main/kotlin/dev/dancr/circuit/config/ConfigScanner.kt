@@ -1,7 +1,7 @@
-package dev.dancr.nexus.config
+package dev.dancr.circuit.config
 
 import com.google.gson.Gson
-import dev.dancr.nexus.plugin.NexusPlugin
+import dev.dancr.circuit.Circuit
 import io.github.classgraph.ClassGraph
 import java.io.File
 import java.io.FileNotFoundException
@@ -12,7 +12,6 @@ object ConfigScanner {
     private const val PACKAGE_PATH = "dev.dancr"
     private val ANNOTATION_NAME = Config::class.qualifiedName
 
-    private val plugin = NexusPlugin.getPlugin<NexusPlugin>()
     private val configs: HashMap<Class<*>, Any> = hashMapOf()
 
     init {
@@ -28,8 +27,8 @@ object ConfigScanner {
     }
 
     private fun getFile(fileName: String) : File {
-        if (!plugin.dataFolder.exists()) throw FileNotFoundException("Configuration file $fileName does not exist")
-        return File(plugin.dataFolder, fileName)
+        if (!Circuit.plugin.dataFolder.exists()) throw FileNotFoundException("Configuration file $fileName does not exist")
+        return File(Circuit.plugin.dataFolder, fileName)
     }
 
     internal inline fun <reified T> getConfig() : T {

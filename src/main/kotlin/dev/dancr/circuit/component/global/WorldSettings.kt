@@ -1,5 +1,6 @@
-package dev.dancr.nexus.component
+package dev.dancr.circuit.component.global
 
+import dev.dancr.circuit.component.ServerComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
@@ -18,14 +19,14 @@ object WorldSettings : ServerComponent() {
         worldSettings.putAll(Setting.values().map { it to true })
     }
 
-    public fun modify(vararg modifiedSettings: Pair<Setting, Boolean>) = modifiedSettings.forEach { worldSettings[it.first] = it.second }
+    fun modify(vararg modifiedSettings: Pair<Setting, Boolean>) = modifiedSettings.forEach { worldSettings[it.first] = it.second }
 
-    public fun modifyAll(isAllowed: Boolean) = worldSettings.replaceAll { _, _ -> isAllowed }
+    fun modifyAll(isAllowed: Boolean) = worldSettings.replaceAll { _, _ -> isAllowed }
 
-    public fun isDisallowed(setting: Setting) : Boolean = !worldSettings[setting]!!
+    fun isDisallowed(setting: Setting) : Boolean = !worldSettings[setting]!!
 
     @EventHandler
-    fun onEntityDamage(event: EntityDamageEvent) {
+    private fun onEntityDamage(event: EntityDamageEvent) {
         if (event is EntityDamageByEntityEvent) {
             event.isCancelled = isDisallowed(Setting.ENTITY_DAMAGE_BY_ENTITY)
         } else {
@@ -34,36 +35,36 @@ object WorldSettings : ServerComponent() {
     }
 
     @EventHandler
-    fun onBlockPlace(event: BlockPlaceEvent) {
+    private fun onBlockPlace(event: BlockPlaceEvent) {
         event.isCancelled = isDisallowed(Setting.BUILD)
     }
 
     @EventHandler
-    fun onBlockBreak(event: BlockBreakEvent) {
+    private fun onBlockBreak(event: BlockBreakEvent) {
         event.isCancelled = isDisallowed(Setting.DESTROY)
     }
 
     @EventHandler
-    fun onFoodLevelChange(event: FoodLevelChangeEvent) {
+    private fun onFoodLevelChange(event: FoodLevelChangeEvent) {
         event.isCancelled = isDisallowed(Setting.FOOD_LEVEL_CHANGE)
     }
 
     @EventHandler
-    fun onWeatherChange(event: WeatherChangeEvent) {
+    private fun onWeatherChange(event: WeatherChangeEvent) {
         event.isCancelled = isDisallowed(Setting.WEATHER)
     }
 
     @EventHandler
-    fun onCreatureSpawn(event: CreatureSpawnEvent) {
+    private fun onCreatureSpawn(event: CreatureSpawnEvent) {
         event.isCancelled = isDisallowed(Setting.CREATURE_SPAWNING)
     }
 
     @EventHandler
-    fun onTimeSkip(event: TimeSkipEvent) {
+    private fun onTimeSkip(event: TimeSkipEvent) {
         event.isCancelled = isDisallowed(Setting.DAYLIGHT_CYCLE)
     }
 
-    public enum class Setting {
+    enum class Setting {
         ENTITY_DAMAGE_BY_ENVIRONMENT,
         ENTITY_DAMAGE_BY_ENTITY,
         BUILD,

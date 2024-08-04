@@ -1,9 +1,9 @@
-package dev.dancr.nexus.event
+package dev.dancr.circuit.event
 
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-open class NexusEvent : Event() {
+open class CircuitEvent : Event() {
 
     companion object {
         public val handlers: HandlerList = HandlerList()
@@ -11,6 +11,5 @@ open class NexusEvent : Event() {
         @JvmStatic public fun getHandlerList(): HandlerList = handlers
     }
 
-    override fun getHandlers(): HandlerList = NexusEvent.handlers
-
+    override fun getHandlers(): HandlerList = CircuitEvent.handlers
 }

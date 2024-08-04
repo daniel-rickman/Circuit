@@ -1,8 +1,9 @@
-package dev.dancr.nexus.component
+package dev.dancr.circuit.component.lobby
 
-import dev.dancr.nexus.config.Config
-import dev.dancr.nexus.config.ConfigScanner
-import dev.dancr.nexus.config.Position
+import dev.dancr.circuit.component.ServerComponent
+import dev.dancr.circuit.config.Config
+import dev.dancr.circuit.config.ConfigScanner
+import dev.dancr.circuit.config.Position
 import org.bukkit.Bukkit
 import org.bukkit.WorldCreator
 import org.bukkit.event.EventHandler
@@ -10,7 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 object LobbySpawning : ServerComponent() {
 
-    @Config("lobby")
+    @Config("lobby_spawn")
     data class LobbySpawnConfig(val worldName: String, val spawnPosition: Position)
 
     private val config: LobbySpawnConfig = ConfigScanner.getConfig()

@@ -1,30 +1,23 @@
-package dev.dancr.nexus.component
+package dev.dancr.circuit.component.lobby
 
-import dev.dancr.nexus.rank.Ranks
-import dev.dancr.nexus.team.Teams
+import dev.dancr.circuit.component.ServerComponent
+import dev.dancr.circuit.component.global.Ranks
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 
-object DefaultChat : ServerComponent() {
+object LobbyChat : ServerComponent() {
 
     init {
-        require(Ranks)
+        hardDepend(Ranks)
     }
 
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
-        if (!Ranks.isEnabled) return
-
         val player = event.player
         val rank = Ranks.getRank(player)
-        val team = Teams.get(player)
 
         event.renderer(ChatRenderer.viewerUnaware { _, sourceDisplayName, message ->
             val component = Component.text()
@@ -32,7 +25,7 @@ object DefaultChat : ServerComponent() {
             if (rank.showPrefix) {
                 component.append(Ranks.getPrefix(rank))
             }
-            component.append(sourceDisplayName.color(if (Teams.isEnabled) team.getTextColor() else NamedTextColor.WHITE))
+            component.append(sourceDisplayName.color(NamedTextColor.WHITE))
 
             component
                 .append(Component.text(" \u00BB ").color(NamedTextColor.GRAY))
@@ -40,4 +33,5 @@ object DefaultChat : ServerComponent() {
                 .build()
         })
     }
+
 }

@@ -1,23 +1,41 @@
 package dev.dancr.circuit
 
-import dev.dancr.circuit.component.LobbyLaunching
-import dev.dancr.nexus.plugin.NexusPlugin
-import dev.dancr.nexus.component.WorldSettings
-import dev.dancr.nexus.team.Teams
+import dev.dancr.circuit.component.Lobby
+import dev.dancr.circuit.component.global.WorldSettings
+import dev.dancr.circuit.player.PlayerData
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.GameRule
 import org.bukkit.World
+import org.bukkit.plugin.java.JavaPlugin
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.sql.Connection
 
-class Circuit : NexusPlugin() {
+class Circuit : JavaPlugin() {
+
+    companion object {
+        private const val DATA_FILE_NAME = "data.db"
+
+        val plugin: JavaPlugin
+            get() = getPlugin(Circuit::class.java)
+    }
 
     val world: World
         get() = Bukkit.getWorlds().first()
 
-    override fun onPluginEnable() {
-        LobbyLaunching.enable()
-        WorldSettings.enable()
-        Teams.enable()
+    final override fun onEnable() {
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir();
+        }
+
+        Database.connect("jdbc:sqlite:/${dataFolder.absolutePath}/$DATA_FILE_NAME")
+        transaction {
+            TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+            SchemaUtils.create(PlayerData)
+        }
 
         // World settings
         Bukkit.setDefaultGameMode(GameMode.ADVENTURE)
@@ -27,6 +45,10 @@ class Circuit : NexusPlugin() {
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false)
         world.setGameRule(GameRule.DO_INSOMNIA, false)
 
+        Lobby.enable()
+    }
+
+    final override fun onDisable() {
     }
 
 }

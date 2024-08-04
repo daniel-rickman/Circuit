@@ -1,10 +1,11 @@
-package dev.dancr.nexus.component
+package dev.dancr.circuit.component.lobby
 
+import dev.dancr.circuit.component.ServerComponent
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 
-object DefaultJoin : ServerComponent() {
+object LobbyJoining : ServerComponent() {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
@@ -13,5 +14,4 @@ object DefaultJoin : ServerComponent() {
             this.foodLevel = 20
         }
     }
-
 }

@@ -1,6 +1,6 @@
-package dev.dancr.nexus.team
+package dev.dancr.circuit.component.global
 
-import dev.dancr.nexus.component.ServerComponent
+import dev.dancr.circuit.component.ServerComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.entity.Player
@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
+//todo Rewrite this to use a variable team configuration. Current system isn't flexible enough.
 object Teams : ServerComponent() {
 
     private val teamMap: MutableMap<Player, Team> = mutableMapOf()
@@ -51,14 +52,12 @@ object Teams : ServerComponent() {
         teamMap -= event.player
     }
 
-    enum class Team(private val hexString: String, private val namedTextColor: NamedTextColor, val isUnrestricted: Boolean = false) {
+    enum class Team(private val hexString: String, public val namedTextColor: NamedTextColor, val isUnrestricted: Boolean = false) {
         RED("#FF5555", NamedTextColor.RED),
         BLUE("#5555FF", NamedTextColor.BLUE),
         GREEN("#55FF55", NamedTextColor.GREEN),
         YELLOW("#DDD605", NamedTextColor.YELLOW),
         NONE("#AAAAAA", NamedTextColor.GRAY, true);
-
-        public fun getNamedTextColor() = namedTextColor
 
         public fun getTextColor() = TextColor.fromHexString(hexString)
     }
